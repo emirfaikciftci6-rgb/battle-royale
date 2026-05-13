@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a3a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<!-- Google AdSense — Replace ca-pub-XXXX with your publisher ID before going live -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXX" crossorigin="anonymous"></script> -->
 <title>Battle Royale 2D</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,6 +41,12 @@
   #startScreen .controls { color: #7a9a7a; font-size: 13px; line-height: 2; text-align: left; margin-bottom: 30px; letter-spacing: 1px; }
   #startBtn { background: #1a3a1a; color: #44ff44; border: 2px solid #44ff44; padding: 14px 50px; font-size: 18px; letter-spacing: 6px; cursor: pointer; font-family: 'Courier New', monospace; transition: all 0.2s; text-transform: uppercase; }
   #startBtn:hover { background: #44ff44; color: #0a0f0a; }
+  .ad-container { display: flex; flex-direction: column; align-items: center; margin: 16px 0; }
+  .ad-label { color: #3a5a3a; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; font-family: 'Courier New', monospace; }
+  .ad-placeholder { background: #0a140a; border: 1px solid #2a4a2a; display: flex; align-items: center; justify-content: center; }
+  .ad-placeholder span { color: #2a4a2a; font-size: 11px; letter-spacing: 2px; font-family: 'Courier New', monospace; }
+  .ad-banner { max-width: 100%; overflow: hidden; }
+  .ad-interstitial { margin: 12px 0 18px; }
 </style>
 </head>
 <body>
@@ -50,6 +62,13 @@
 <div id="overlay" style="display:none">
   <h1 id="overlayTitle">VICTORY</h1>
   <p id="overlayMsg">YOU ARE THE LAST ONE STANDING</p>
+  <div class="ad-container ad-interstitial" id="ad-gameover">
+    <span class="ad-label">Advertisement</span>
+    <!-- AdSense unit: 300x250 medium rectangle — Replace ca-pub-XXXX with your publisher ID -->
+    <div class="ad-placeholder" style="width:300px;height:250px;">
+      <span>AD UNIT — 300×250</span>
+    </div>
+  </div>
   <button id="restartBtn" onclick="restartGame()">PLAY AGAIN</button>
 </div>
 <div id="startScreen">
@@ -63,6 +82,13 @@
     F &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;— Pick up loot<br>
     WEAPONS: Pistol · SMG · Shotgun · Sniper · AR<br>
     Survive the shrinking zone &amp; eliminate all enemies
+  </div>
+  <div class="ad-container ad-banner" id="ad-start-banner">
+    <span class="ad-label">Advertisement</span>
+    <!-- AdSense unit: 728x90 leaderboard — Replace ca-pub-XXXX with your publisher ID -->
+    <div class="ad-placeholder" style="width:728px;max-width:90vw;height:90px;">
+      <span>AD UNIT — 728×90</span>
+    </div>
   </div>
   <button id="startBtn" onclick="startGame()">DEPLOY</button>
 </div>
@@ -1119,6 +1145,14 @@ function lerp(a, b, t) { return a + (b - a) * t; }
 // Canvas default size
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+
+// PWA: Register Service Worker for offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .catch(err => console.warn('SW registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>

@@ -2,402 +2,302 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Snake Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0f0a" />
+  <meta name="description" content="Military arcade games — Snake and Battle Royale 2D." />
+  <title>Arcade Hub — Military Games</title>
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: #1a1a2e;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+      background: #0a0f0a;
       font-family: 'Courier New', Courier, monospace;
-      color: #ffffff;
-    }
-
-    #game-container {
+      color: #cccccc;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
     }
 
-    #score-board {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 500px;
-      padding: 10px 16px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
+    /* ── Header ── */
+    header {
+      width: 100%;
+      text-align: center;
+      padding: 48px 20px 20px;
+      border-bottom: 1px solid #1a3a1a;
     }
-
-    #score-board .label {
-      font-size: 13px;
-      letter-spacing: 2px;
+    header h1 {
+      color: #44ff44;
+      font-size: clamp(28px, 5vw, 52px);
+      letter-spacing: 10px;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.5);
+      text-shadow: 0 0 30px rgba(68,255,68,0.5);
     }
-
-    #score-display {
-      font-size: 26px;
-      font-weight: bold;
-      color: #00d474;
-      letter-spacing: 2px;
-    }
-
-    #canvas-wrapper {
-      position: relative;
-      border: 2px solid rgba(0, 212, 116, 0.3);
-      border-radius: 6px;
-      box-shadow: 0 0 30px rgba(0, 212, 116, 0.1), 0 0 60px rgba(0, 0, 0, 0.5);
-      overflow: hidden;
-    }
-
-    canvas {
-      display: block;
-    }
-
-    #overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(26, 26, 46, 0.88);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    #overlay.visible {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    #overlay-title {
-      font-size: 36px;
-      font-weight: bold;
-      color: #ff6b35;
+    header p {
+      color: #4a6a4a;
+      font-size: 13px;
       letter-spacing: 4px;
       text-transform: uppercase;
-    }
-
-    #overlay-score {
-      font-size: 16px;
-      color: rgba(255, 255, 255, 0.7);
-      letter-spacing: 2px;
-    }
-
-    #overlay-score span {
-      color: #00d474;
-      font-size: 22px;
-    }
-
-    #restart-btn {
       margin-top: 8px;
-      padding: 12px 36px;
-      background: #00d474;
-      color: #1a1a2e;
-      border: none;
-      border-radius: 6px;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 15px;
-      font-weight: bold;
+    }
+
+    /* ── Top banner ad ── */
+    .ad-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0 8px;
+    }
+    .ad-label {
+      color: #2a4a2a;
+      font-size: 9px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
+      margin-bottom: 4px;
+    }
+    .ad-placeholder {
+      background: #0a140a;
+      border: 1px solid #1a3a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ad-placeholder span {
+      color: #2a4a2a;
+      font-size: 11px;
+      letter-spacing: 2px;
     }
 
-    #restart-btn:hover {
-      background: #00f585;
-      transform: scale(1.04);
+    /* ── Game cards ── */
+    main {
+      width: 100%;
+      max-width: 1000px;
+      padding: 40px 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
     }
 
-    #restart-btn:active {
-      transform: scale(0.98);
+    .game-card {
+      background: #0d150d;
+      border: 2px solid #1a3a1a;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .game-card:hover {
+      border-color: #44ff44;
+      box-shadow: 0 0 24px rgba(68,255,68,0.15);
     }
 
-    #hint {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.3);
+    .card-preview {
+      width: 100%;
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      background: #061006;
+      border-bottom: 1px solid #1a3a1a;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-preview::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 39px,
+        rgba(30,60,30,0.3) 39px,
+        rgba(30,60,30,0.3) 40px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 39px,
+        rgba(30,60,30,0.3) 39px,
+        rgba(30,60,30,0.3) 40px
+      );
+    }
+    .card-icon {
+      position: relative;
+      z-index: 1;
+      font-size: 72px;
+      filter: drop-shadow(0 0 16px rgba(68,255,68,0.6));
+    }
+
+    .card-body {
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-tag {
+      display: inline-block;
+      background: #0a1a0a;
+      border: 1px solid #2a4a2a;
+      color: #4a8a4a;
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 3px 8px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .card-title {
+      color: #44ff44;
+      font-size: 22px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(68,255,68,0.3);
+    }
+
+    .card-desc {
+      color: #7a9a7a;
+      font-size: 13px;
+      line-height: 1.7;
+      letter-spacing: 0.5px;
+      flex: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+      color: #3a5a3a;
       letter-spacing: 1px;
     }
+    .card-meta span::before { content: '// '; }
+
+    .play-btn {
+      display: block;
+      text-align: center;
+      background: #0d1a0d;
+      color: #44ff44;
+      border: 2px solid #44ff44;
+      padding: 12px;
+      font-size: 14px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-family: 'Courier New', Courier, monospace;
+      transition: background 0.2s, color 0.2s;
+      margin-top: 8px;
+    }
+    .play-btn:hover {
+      background: #44ff44;
+      color: #0a0f0a;
+    }
+
+    /* ── Bottom inline ad ── */
+    .ad-section {
+      width: 100%;
+      max-width: 1000px;
+      padding: 8px 24px 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Footer ── */
+    footer {
+      width: 100%;
+      border-top: 1px solid #1a3a1a;
+      text-align: center;
+      padding: 20px;
+      color: #2a4a2a;
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+    footer a { color: #3a6a3a; text-decoration: none; }
+    footer a:hover { color: #44ff44; }
   </style>
 </head>
 <body>
-  <div id="game-container">
-    <div id="score-board">
-      <span class="label">Score</span>
-      <span id="score-display">0</span>
-      <span class="label">Snake</span>
+
+  <!-- Google AdSense — Replace ca-pub-XXXX with your publisher ID before going live -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXX" crossorigin="anonymous"></script> -->
+
+  <header>
+    <h1>Arcade Hub</h1>
+    <p>Military tactical games — select your mission</p>
+  </header>
+
+  <!-- Banner ad: 728x90 leaderboard below header -->
+  <div class="ad-container" id="ad-top">
+    <span class="ad-label">Advertisement</span>
+    <!-- AdSense unit: 728x90 leaderboard — Replace ca-pub-XXXX with your publisher ID -->
+    <div class="ad-placeholder" style="width:728px;max-width:95vw;height:90px;">
+      <span>AD UNIT — 728×90</span>
     </div>
-    <div id="canvas-wrapper">
-      <canvas id="game-canvas"></canvas>
-      <div id="overlay">
-        <div id="overlay-title">Game Over</div>
-        <div id="overlay-score">Final Score: <span id="final-score">0</span></div>
-        <button id="restart-btn">Restart</button>
-      </div>
-    </div>
-    <div id="hint">Use arrow keys to control the snake</div>
   </div>
 
-  <script>
-    (() => {
-      const COLS = 20;
-      const ROWS = 20;
-      const CELL = 25;
-      const WIDTH = COLS * CELL;
-      const HEIGHT = ROWS * CELL;
-      const STEP_MS = 125;
+  <main>
 
-      // Colors
-      const C_BG        = '#16162a';
-      const C_GRID      = '#1f1f38';
-      const C_SNAKE_HEAD = '#00ff88';
-      const C_SNAKE_BODY = '#00d474';
-      const C_SNAKE_DARK = '#009950';
-      const C_FOOD      = '#ff6b35';
-      const C_FOOD_GLOW  = '#ff9060';
+    <!-- Snake Card -->
+    <article class="game-card">
+      <div class="card-preview">
+        <span class="card-icon">🐍</span>
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Classic</span>
+        <div class="card-title">Snake</div>
+        <p class="card-desc">
+          Navigate the grid, eat targets, and grow your snake without
+          hitting walls or yourself. A timeless tactical reflex challenge.
+        </p>
+        <div class="card-meta">
+          <span>Arrow Keys</span>
+          <span>Single Player</span>
+          <span>Score Attack</span>
+        </div>
+        <a href="snake.html" class="play-btn">Play Now</a>
+      </div>
+    </article>
 
-      const canvas = document.getElementById('game-canvas');
-      const ctx    = canvas.getContext('2d');
-      canvas.width  = WIDTH;
-      canvas.height = HEIGHT;
+    <!-- Battle Royale Card -->
+    <article class="game-card">
+      <div class="card-preview">
+        <span class="card-icon">🎯</span>
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Battle Royale</span>
+        <div class="card-title">Battle Royale 2D</div>
+        <p class="card-desc">
+          Drop into a 4000×4000 warzone with 20 AI soldiers.
+          Loot weapons, survive the shrinking zone, and eliminate every enemy
+          to claim victory.
+        </p>
+        <div class="card-meta">
+          <span>WASD + Mouse</span>
+          <span>vs 20 Bots</span>
+          <span>PWA Ready</span>
+        </div>
+        <a href="battle-royale.html" class="play-btn">Deploy</a>
+      </div>
+    </article>
 
-      const overlay      = document.getElementById('overlay');
-      const scoreDisplay = document.getElementById('score-display');
-      const finalScore   = document.getElementById('final-score');
-      const restartBtn   = document.getElementById('restart-btn');
+  </main>
 
-      // ── State ────────────────────────────────────────────────────────────
-      let snake, dir, nextDir, food, score, gameOver, lastStep, animId;
+  <!-- Inline rectangle ad between cards and footer -->
+  <div class="ad-section" id="ad-bottom">
+    <div class="ad-container">
+      <span class="ad-label">Advertisement</span>
+      <!-- AdSense unit: 300x250 medium rectangle — Replace ca-pub-XXXX with your publisher ID -->
+      <div class="ad-placeholder" style="width:300px;height:250px;">
+        <span>AD UNIT — 300×250</span>
+      </div>
+    </div>
+  </div>
 
-      function initState() {
-        const midCol = Math.floor(COLS / 2);
-        const midRow = Math.floor(ROWS / 2);
-        snake = [
-          { x: midCol,     y: midRow },
-          { x: midCol - 1, y: midRow },
-          { x: midCol - 2, y: midRow },
-        ];
-        dir     = { x: 1, y: 0 };
-        nextDir = { x: 1, y: 0 };
-        score   = 0;
-        gameOver = false;
-        lastStep = null;
-        scoreDisplay.textContent = '0';
-        overlay.classList.remove('visible');
-        spawnFood();
-      }
+  <footer>
+    <p>&copy; 2024 Arcade Hub &nbsp;|&nbsp; <a href="battle-royale.html">Battle Royale 2D</a> &nbsp;|&nbsp; <a href="snake.html">Snake</a></p>
+  </footer>
 
-      function spawnFood() {
-        const occupied = new Set(snake.map(s => `${s.x},${s.y}`));
-        let pos;
-        do {
-          pos = {
-            x: Math.floor(Math.random() * COLS),
-            y: Math.floor(Math.random() * ROWS),
-          };
-        } while (occupied.has(`${pos.x},${pos.y}`));
-        food = pos;
-      }
-
-      // ── Input ────────────────────────────────────────────────────────────
-      const KEY_DIR = {
-        ArrowUp:    { x: 0,  y: -1 },
-        ArrowDown:  { x: 0,  y:  1 },
-        ArrowLeft:  { x: -1, y:  0 },
-        ArrowRight: { x: 1,  y:  0 },
-      };
-
-      document.addEventListener('keydown', e => {
-        const d = KEY_DIR[e.key];
-        if (!d) return;
-        e.preventDefault();
-        // Prevent 180-degree reversal
-        if (d.x === -dir.x && d.y === -dir.y) return;
-        nextDir = d;
-      });
-
-      restartBtn.addEventListener('click', () => {
-        if (animId) cancelAnimationFrame(animId);
-        initState();
-        animId = requestAnimationFrame(loop);
-      });
-
-      // ── Game Logic ───────────────────────────────────────────────────────
-      function step() {
-        dir = nextDir;
-        const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
-
-        // Wall collision
-        if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) {
-          triggerGameOver();
-          return;
-        }
-        // Self collision
-        if (snake.some(s => s.x === head.x && s.y === head.y)) {
-          triggerGameOver();
-          return;
-        }
-
-        snake.unshift(head);
-
-        if (head.x === food.x && head.y === food.y) {
-          score++;
-          scoreDisplay.textContent = score;
-          spawnFood();
-        } else {
-          snake.pop();
-        }
-      }
-
-      function triggerGameOver() {
-        gameOver = true;
-        finalScore.textContent = score;
-        overlay.classList.add('visible');
-      }
-
-      // ── Rendering ────────────────────────────────────────────────────────
-      function drawGrid() {
-        ctx.strokeStyle = C_GRID;
-        ctx.lineWidth = 0.5;
-        for (let c = 0; c <= COLS; c++) {
-          ctx.beginPath();
-          ctx.moveTo(c * CELL, 0);
-          ctx.lineTo(c * CELL, HEIGHT);
-          ctx.stroke();
-        }
-        for (let r = 0; r <= ROWS; r++) {
-          ctx.beginPath();
-          ctx.moveTo(0, r * CELL);
-          ctx.lineTo(WIDTH, r * CELL);
-          ctx.stroke();
-        }
-      }
-
-      function drawFood() {
-        const x = food.x * CELL + CELL / 2;
-        const y = food.y * CELL + CELL / 2;
-        const r = CELL / 2 - 3;
-
-        // Glow
-        const grd = ctx.createRadialGradient(x, y, 1, x, y, r + 4);
-        grd.addColorStop(0, 'rgba(255,107,53,0.6)');
-        grd.addColorStop(1, 'rgba(255,107,53,0)');
-        ctx.fillStyle = grd;
-        ctx.beginPath();
-        ctx.arc(x, y, r + 4, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Body
-        ctx.fillStyle = C_FOOD;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Shine
-        ctx.fillStyle = C_FOOD_GLOW;
-        ctx.beginPath();
-        ctx.arc(x - r * 0.3, y - r * 0.3, r * 0.28, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      function drawSnake() {
-        snake.forEach((seg, i) => {
-          const px = seg.x * CELL;
-          const py = seg.y * CELL;
-          const pad = i === 0 ? 1 : 2;
-
-          // Shadow / dark outline
-          ctx.fillStyle = C_SNAKE_DARK;
-          ctx.beginPath();
-          ctx.roundRect(px + pad - 1, py + pad - 1, CELL - (pad * 2) + 2, CELL - (pad * 2) + 2, 4);
-          ctx.fill();
-
-          // Body fill
-          const color = i === 0 ? C_SNAKE_HEAD : C_SNAKE_BODY;
-          ctx.fillStyle = color;
-          ctx.beginPath();
-          ctx.roundRect(px + pad, py + pad, CELL - pad * 2, CELL - pad * 2, 4);
-          ctx.fill();
-
-          // Head eyes
-          if (i === 0) {
-            ctx.fillStyle = '#1a1a2e';
-            const ex = px + CELL / 2;
-            const ey = py + CELL / 2;
-            const eyeOffset = 4;
-            const eyeR = 2;
-
-            let e1, e2;
-            if (dir.x === 1)       { e1 = {x: ex+3, y: ey-eyeOffset}; e2 = {x: ex+3, y: ey+eyeOffset}; }
-            else if (dir.x === -1) { e1 = {x: ex-3, y: ey-eyeOffset}; e2 = {x: ex-3, y: ey+eyeOffset}; }
-            else if (dir.y === -1) { e1 = {x: ex-eyeOffset, y: ey-3}; e2 = {x: ex+eyeOffset, y: ey-3}; }
-            else                   { e1 = {x: ex-eyeOffset, y: ey+3}; e2 = {x: ex+eyeOffset, y: ey+3}; }
-
-            ctx.beginPath(); ctx.arc(e1.x, e1.y, eyeR, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(e2.x, e2.y, eyeR, 0, Math.PI*2); ctx.fill();
-          }
-        });
-      }
-
-      function render() {
-        ctx.fillStyle = C_BG;
-        ctx.fillRect(0, 0, WIDTH, HEIGHT);
-        drawGrid();
-        drawFood();
-        drawSnake();
-      }
-
-      // ── Loop ─────────────────────────────────────────────────────────────
-      function loop(ts) {
-        if (gameOver) return;
-
-        if (lastStep === null) lastStep = ts;
-        if (ts - lastStep >= STEP_MS) {
-          step();
-          lastStep = ts;
-        }
-
-        render();
-        if (!gameOver) {
-          animId = requestAnimationFrame(loop);
-        }
-      }
-
-      // Polyfill roundRect for older browsers
-      if (!CanvasRenderingContext2D.prototype.roundRect) {
-        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-          if (w < 2 * r) r = w / 2;
-          if (h < 2 * r) r = h / 2;
-          this.beginPath();
-          this.moveTo(x + r, y);
-          this.arcTo(x + w, y,     x + w, y + h, r);
-          this.arcTo(x + w, y + h, x,     y + h, r);
-          this.arcTo(x,     y + h, x,     y,     r);
-          this.arcTo(x,     y,     x + w, y,     r);
-          this.closePath();
-        };
-      }
-
-      // ── Boot ─────────────────────────────────────────────────────────────
-      initState();
-      animId = requestAnimationFrame(loop);
-    })();
-  </script>
 </body>
 </html>
